@@ -24,7 +24,7 @@ class Priority_Queue:
             return difference
         
         # hangisinin goal'e gitmesi daha az maliyetli ise o önce gelir.
-        return first_node.current_to_goal_cost() - second_node.current_to_goal_cost() 
+        return first_node.get_current_to_goal_cost() - second_node.get_current_to_goal_cost() 
         
     def is_empty(self):
         return len(self.queue) == 0

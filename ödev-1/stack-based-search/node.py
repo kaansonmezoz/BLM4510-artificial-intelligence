@@ -30,19 +30,19 @@ class Node:
         self.source_to_current_cost = source_to_current_cost
         self.current_to_goal_cost = current_to_goal_cost
     
-    def x(self):
+    def get_x(self):
         return self.x
     
-    def y(self):
+    def get_y(self):
         return self.y
     
-    def red(self):
+    def get_red(self):
         return self.red
     
-    def source_to_current_cost(self):
+    def get_source_to_current_cost(self):
         return self.source_to_current_cost
     
-    def current_to_goal_cost(self):
+    def get_current_to_goal_cost(self):
         return self.current_to_goal_cost
     
     def total_cost(self):
