@@ -50,7 +50,28 @@ def possible_total_cost_of_child_node(source_to_child_node_cost, child_node):
 # Bu fonksiyon bizlere şey dönecek, şuanki node'tan gidilebilecek node'lara yani bir nevi alabileceğimiz aksiyonlara bakacak.
 # Sadece gidilebilecek node'ları al total cost hesaplama. bunun hesabı sonradan yapılacak
 def get_actions(image_nodes, current_node):
-    return
+    actions = []
+    
+    row_count = len(image_nodes)
+    column_count = len(image_nodes[0])
+    
+    x = current_node.x()
+    y = current_node.y()
+    
+    if x > 0:
+        actions.append(image_nodes[x-1][y])        
+        if y > 0:
+            actions.append(image_nodes[x-1][y-1])
+            if y < row_count - 1:
+                actions.append(image_nodes[x-1][y+1])    
+        if x < column_count - 1:
+            actions.append(image_nodes[x+1][y])        
+            if y > 0:
+                actions.append(image_nodes[x+1][y-1])
+                if y < row_count - 1:
+                    actions.append(image_nodes[x+1][y+1])
+            
+    return actions
 
 def calculate_cost_to_next_node(target_node):
     return 255 - target_node.red()
@@ -84,7 +105,8 @@ def find_solution(image_nodes, initial_state, goal_state):
                 frontier.add_node(child_node)        
             elif frontier.should_update_node(child_node, possible_total_cost):
                 frontier.update_node(child_node, possible_total_cost)
-                                
+
+# Bizim için burada stateler aslında pixellerin konumu olmuş oluyor.                                
 initial_state = {}
 initial_state['x'] = 0
 initial_state['y'] = 0
