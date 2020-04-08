@@ -19,7 +19,10 @@ class Node:
                 image_nodes[i][j] = cls(i, j, red, current_to_goal_cost)
     
         return image_nodes
-
+    
+    def set_parent(self, parent_node):
+        self.parent = parent_node
+    
     def set_source_to_current_cost(self, source_to_current_cost):
         self.source_to_current_cost = source_to_current_cost
     
@@ -47,3 +50,6 @@ class Node:
     
     def total_cost(self):
         return self.current_to_goal_cost + self.source_to_current_cost
+    
+    def get_parent(self):
+        return self.parent
