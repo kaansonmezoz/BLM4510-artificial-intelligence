@@ -4,10 +4,17 @@ class Priority_Queue:
     def __init__(self):
         self.queue = []
         self.items = set()
+        self.max_item_count = 0
     
     def add_node(self, node):
         self.queue.append(node)
         self.items.add(node)
+        
+        size = len(self.items)
+        
+        if size > self.max_item_count:
+            self.max_item_count = size
+            
         self.sort()
         
     def update_node(self, node, source_to_current_cost):
@@ -42,6 +49,9 @@ class Priority_Queue:
     
     def should_update_node(self, node, possible_total_cost):
         return self.exists(node) and node.total_cost() > possible_total_cost
+    
+    def get_max_item_count(self):
+        return self.max_item_count
 
 class Priority_Queue_Heap:
     def __init__(self):

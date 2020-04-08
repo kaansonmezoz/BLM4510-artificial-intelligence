@@ -121,7 +121,7 @@ def find_solution(image_nodes, initial_state, goal_state, frontier):
                 child_node.set_parent(current_node)
                 frontier.update_node(child_node, possible_total_cost)
 
-image, row, column = read_image_rgb(r'C:\Users\user\Desktop\best_case.png')
+image, row, column = read_image_rgb(r'C:\Users\user\Desktop\resim-2.png')
 
 # Bizim için burada stateler aslında pixellerin konumu olmuş oluyor.                                
 initial_state = {}
@@ -129,23 +129,26 @@ initial_state['x'] = 0
 initial_state['y'] = 0
 
 goal_state = {}
-goal_state['x'] = 242
-goal_state['y'] = 433
+goal_state['x'] = 648
+goal_state['y'] = 1152
 
 image_nodes = convert_image_to_nodes(image, row, column, goal_state['x'], goal_state['y'])
 
 print("Started A* with array based priority queue implementation")
+queue = Priority_Queue()
 start_time = time()
-is_successfull, visited_nodes, last_node = find_solution(image_nodes, initial_state, goal_state, Priority_Queue())
+is_successfull, visited_nodes, last_node = find_solution(image_nodes, initial_state, goal_state, queue)
 finish_time = time()
 print("Completed at %s seconds" %(finish_time - start_time))
 
-
 print("Found goal state: " + str(is_successfull))
 print("Visited " + str(len(visited_nodes)) + " nodes")
+print("Max node count in queue " + str(queue.get_max_item_count()))
+
 
 show_image(image, last_node)
 
+"""
 image, row, column = read_image_rgb(r'C:\Users\user\Desktop\best_case.png')
 
 image_nodes = convert_image_to_nodes(image, row, column, goal_state['x'], goal_state['y'])
@@ -160,3 +163,4 @@ print("Found goal state: " + str(is_successfull))
 print("Visited " + str(len(visited_nodes)) + " nodes")
 
 show_image(image, last_node)
+"""
