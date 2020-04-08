@@ -33,9 +33,10 @@ yani hashtable tutabiliriz
 
 """
 
-from image_operations import read_image_rgb
+from image_operations import read_image_rgb, show_image
 from node import Node
-from custom_queue import Priority_Queue
+from custom_queue import Priority_Queue, Priority_Queue_Heap
+from time import time
 
 
 def convert_image_to_nodes(image, row, column, goal_x, goal_y):
@@ -58,70 +59,38 @@ def get_actions(image_nodes, current_node):
     x = current_node.get_x()
     y = current_node.get_y()
     
-    if x == 0:
+    if (x + 1 >= 0 and x + 1 < row_count):
         actions.append(image_nodes[x+1][y])
         
-        if y == 0:
-            actions.append(image_nodes[x][y+1])
-            actions.append(image_nodes[x+1][y+1])
-        elif y == column_count - 1:
+        if (y - 1 >= 0 and y - 1 < column_count):
             actions.append(image_nodes[x][y-1])
-            actions.append(image_nodes[x+1][y-1])
-        else:
-            actions.append(image_nodes[x][y+1])
-            actions.append(image_nodes[x][y-1])
-                    
-            actions.append(image_nodes[x+1][y+1])
-            actions.append(image_nodes[x+1][y-1])    
-    elif x == row_count - 1:
-        actions.append(image_nodes[x-1][y])
-
-        if y == 0:
-            actions.append(image_nodes[x][y+1])
-            actions.append(image_nodes[x-1][y+1])
-        elif y == column_count - 1:
-            actions.append(image_nodes[x][y-1])
-            actions.append(image_nodes[x-1][y-1])
-        else:
-            actions.append(image_nodes[x][y+1])
-            actions.append(image_nodes[x][y-1])
-            
-            actions.append(image_nodes[x-1][y+1])
-            actions.append(image_nodes[x-1][y-1])    
-
-    else:
-        actions.append(image_nodes[x-1][y])
-        actions.append(image_nodes[x+1][y])
         
-        if y == 0:
+        if (x- 1 >= 0 and x- 1 < row_count):
+            actions.append(image_nodes[x-1][y])
+        
+        if (y + 1 >= 0 and y + 1 < column_count):
             actions.append(image_nodes[x][y+1])
-            
-            actions.append(image_nodes[x-1][y+1])
-            actions.append(image_nodes[x+1][y+1])        
-        if y == column_count-1:
-            actions.append(image_nodes[x][y-1])
-            
-            actions.append(image_nodes[x-1][y-1])
+        
+        if (x + 1 >= 0 and x + 1 < row_count and y + 1 >= 0 and y + 1 < column_count):
+            actions.append(image_nodes[x+1][y+1])
+        
+        if (x + 1 >= 0 and x + 1 < row_count  and y - 1 >= 0 and y - 1 < column_count):
             actions.append(image_nodes[x+1][y-1])
-        else:
-            actions.append(image_nodes[x][y+1])            
-            actions.append(image_nodes[x][y-1])
-            
-            
+        
+        if (x - 1 >= 0 and x - 1 < row_count  and y + 1 >= 0 and y + 1 < column_count):
             actions.append(image_nodes[x-1][y+1])
+        
+        if (x - 1 >= 0 and  - 1 < row_count  and y - 1 >= 0 and y - 1 < column_count):
             actions.append(image_nodes[x-1][y-1])
-                        
-            actions.append(image_nodes[x+1][y+1])                    
-            actions.append(image_nodes[x+1][y-1])
-                        
+    
     return actions
 
 def calculate_cost_to_next_node(target_node):
     return 255 - target_node.get_red()
 
-def find_solution(image_nodes, initial_state, goal_state):    
-    frontier = Priority_Queue()    
+def find_solution(image_nodes, initial_state, goal_state, frontier):    
     current_node = image_nodes[initial_state['x']][initial_state['y']]
+    current_node.set_parent(None)
     goal_node = image_nodes[goal_state['x']][goal_state['y']]
     frontier.add_node(current_node)    
     
@@ -136,7 +105,7 @@ def find_solution(image_nodes, initial_state, goal_state):
         print("Explored a node! x: {0}, y: {1}".format(current_node.get_x(), current_node.get_y()))
         
         if current_node == goal_node:        
-            return True, explored_nodes
+            return True, explored_nodes, goal_node
         
         actions = get_actions(image_nodes, current_node)
         
@@ -145,9 +114,11 @@ def find_solution(image_nodes, initial_state, goal_state):
             possible_total_cost = possible_total_cost_of_child_node(source_to_next_node_cost, child_node)
             
             if child_node_not_seen(explored_nodes, frontier, child_node):
+                child_node.set_parent(current_node)
                 child_node.set_source_to_current_cost(source_to_next_node_cost)
                 frontier.add_node(child_node)        
             elif frontier.should_update_node(child_node, possible_total_cost):
+                child_node.set_parent(current_node)
                 frontier.update_node(child_node, possible_total_cost)
 
 image, row, column = read_image_rgb(r'C:\Users\user\Desktop\best_case.png')
@@ -158,12 +129,34 @@ initial_state['x'] = 0
 initial_state['y'] = 0
 
 goal_state = {}
-goal_state['x'] = 647
-goal_state['y'] = 1151
+goal_state['x'] = 242
+goal_state['y'] = 433
 
 image_nodes = convert_image_to_nodes(image, row, column, goal_state['x'], goal_state['y'])
 
-is_successfull, visited_nodes = find_solution(image_nodes, initial_state, goal_state)
+print("Started A* with array based priority queue implementation")
+start_time = time()
+is_successfull, visited_nodes, last_node = find_solution(image_nodes, initial_state, goal_state, Priority_Queue())
+finish_time = time()
+print("Completed at %s seconds" %(finish_time - start_time))
+
 
 print("Found goal state: " + str(is_successfull))
 print("Visited " + str(len(visited_nodes)) + " nodes")
+
+show_image(image, last_node)
+
+image, row, column = read_image_rgb(r'C:\Users\user\Desktop\best_case.png')
+
+image_nodes = convert_image_to_nodes(image, row, column, goal_state['x'], goal_state['y'])
+
+print("Started A* with array based priority queue implementation")
+start_time = time()
+is_successfull, visited_nodes, last_node = find_solution(image_nodes, initial_state, goal_state, Priority_Queue_Heap())
+finish_time = time()
+print("Completed at %s seconds" %(finish_time - start_time))
+
+print("Found goal state: " + str(is_successfull))
+print("Visited " + str(len(visited_nodes)) + " nodes")
+
+show_image(image, last_node)
