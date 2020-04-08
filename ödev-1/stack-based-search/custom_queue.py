@@ -36,7 +36,7 @@ class Priority_Queue:
         return node not in self.items
     
     def pop(self):
-        node = self.queue.pop()
+        node = self.queue.pop(0)
         self.items.discard(node)
         return node
     

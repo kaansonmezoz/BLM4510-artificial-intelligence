@@ -114,7 +114,6 @@ def get_actions(image_nodes, current_node):
             actions.append(image_nodes[x+1][y+1])                    
             actions.append(image_nodes[x+1][y-1])
                         
-    
     return actions
 
 def calculate_cost_to_next_node(target_node):
@@ -151,17 +150,20 @@ def find_solution(image_nodes, initial_state, goal_state):
             elif frontier.should_update_node(child_node, possible_total_cost):
                 frontier.update_node(child_node, possible_total_cost)
 
+image, row, column = read_image_rgb(r'C:\Users\user\Desktop\best_case.png')
+
 # Bizim için burada stateler aslında pixellerin konumu olmuş oluyor.                                
 initial_state = {}
 initial_state['x'] = 0
 initial_state['y'] = 0
 
 goal_state = {}
-goal_state['x'] = 15
-goal_state['y'] = 15
+goal_state['x'] = 647
+goal_state['y'] = 1151
 
-
-image, row, column = read_image_rgb(r'C:\Users\user\Desktop\438e7e33-80c6-4f28-b520-f1034c7c01ab.jpg')
 image_nodes = convert_image_to_nodes(image, row, column, goal_state['x'], goal_state['y'])
 
 is_successfull, visited_nodes = find_solution(image_nodes, initial_state, goal_state)
+
+print("Found goal state: " + str(is_successfull))
+print("Visited " + str(len(visited_nodes)) + " nodes")
